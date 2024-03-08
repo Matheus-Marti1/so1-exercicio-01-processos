@@ -90,5 +90,31 @@ public class RedesController {
 			}
 		}
 	}
+	
+	@SuppressWarnings("deprecation")
+	public void ping() {
+		String os = os();
+		if (os.contains("Windows")) {
+			try {
+				System.out.println("Calculando tempo médio de ping para www.google.com.br, aguarde...");
+				Process p = Runtime.getRuntime().exec("ping -4 -n 10 www.google.com.br");
+				InputStream fluxo = p.getInputStream();
+				InputStreamReader leitor = new InputStreamReader(fluxo);
+				BufferedReader buffer = new BufferedReader(leitor);
+				String linha = buffer.readLine();
+				String separador = " ";
+				while (linha != null) {
+					String[] partes = linha.split(separador);
+					if (linha.contains("dia")) {
+						String media = partes[partes.length - 1];
+						System.out.println("Média do ping para www.google.com.br: " + media);
+					}
+					linha = buffer.readLine();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 }
