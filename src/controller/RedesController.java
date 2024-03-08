@@ -83,14 +83,11 @@ public class RedesController {
 				leitor.close();
 				buffer.close();
 			} catch (IOException e) {
-				String msgErro = e.getMessage();
-				if (msgErro.contains("2")) {
-					
-				}
+				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public void ping() {
 		String os = os();
@@ -111,6 +108,32 @@ public class RedesController {
 					}
 					linha = buffer.readLine();
 				}
+				fluxo.close();
+				leitor.close();
+				buffer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else if (os.contains("Linux")) {
+			try {
+				System.out.println("Calculando tempo médio de ping para www.google.com.br, aguarde...");
+				Process p = Runtime.getRuntime().exec("ping -4 -c 10 www.google.com.br");
+				InputStream fluxo = p.getInputStream();
+				InputStreamReader leitor = new InputStreamReader(fluxo);
+				BufferedReader buffer = new BufferedReader(leitor);
+				String linha = buffer.readLine();
+				String separador = "/";
+				while (linha != null) {
+					String[] partes = linha.split(separador);
+					if (linha.contains("rtt")) {
+						String media = partes[4];
+						System.out.println("Média do ping para www.google.com.br: " + media);
+					}
+					linha = buffer.readLine();
+				}
+				fluxo.close();
+				leitor.close();
+				buffer.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
