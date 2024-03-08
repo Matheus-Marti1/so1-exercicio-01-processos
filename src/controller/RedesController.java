@@ -43,7 +43,7 @@ public class RedesController {
 						System.out.println("IPv4: " + ipv4);
 						System.out.println();
 					}
-					
+
 					linha = buffer.readLine();
 				}
 				fluxo.close();
@@ -52,6 +52,41 @@ public class RedesController {
 
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+		} else if (os.contains("Linux")) {
+			try {
+				Process p = Runtime.getRuntime().exec("/sbin/ifconfig");
+				InputStream fluxo = p.getInputStream();
+				InputStreamReader leitor = new InputStreamReader(fluxo);
+				BufferedReader buffer = new BufferedReader(leitor);
+				String linha = buffer.readLine();
+				String separador = " ";
+				String nomeAdaptador = "";
+				while (linha != null) {
+					String[] partes = linha.split(separador);
+					if (linha.contains("flags")) {
+						nomeAdaptador = partes[0];
+						linha = buffer.readLine();
+					}
+
+					partes = linha.split(separador);
+					if (linha.contains("inet") && !linha.contains("t6")) {
+						String ipv4 = partes[9];
+						System.out.println(nomeAdaptador);
+						System.out.println("IPv4: " + ipv4);
+						System.out.println();
+					}
+
+					linha = buffer.readLine();
+				}
+				fluxo.close();
+				leitor.close();
+				buffer.close();
+			} catch (IOException e) {
+				String msgErro = e.getMessage();
+				if (msgErro.contains("2")) {
+					
+				}
 			}
 		}
 	}
